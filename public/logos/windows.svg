@@ -1,0 +1,7 @@
+<svg id="windows" xmlns="http://www.w3.org/2000/svg" width="191" height="72" viewBox="0 0 191 72">
+  <g id="base" fill="#fff" stroke="#e5e5e5" stroke-width="0.5">
+    <rect width="191" height="72" rx="5" stroke="none"/>
+    <rect x="0.25" y="0.25" width="190.5" height="71.5" rx="4.75" fill="none"/>
+  </g>
+  <path id="windows_icon" data-name="windows icon" d="M0,5.534,14.317,3.366l.006,15.361-14.31.091ZM14.31,20.5l.011,15.375L.011,33.683V20.394ZM16.046,3.082,35.028,0V18.531L16.046,18.7ZM35.033,20.641l0,18.448-18.983-2.98-.027-15.5Z" transform="translate(77.461 16.07)" fill="#00adef"/>
+</svg>
