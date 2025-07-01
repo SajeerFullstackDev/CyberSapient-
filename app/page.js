@@ -1,12 +1,17 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
-import { Car, Gauge, Settings, Gift, User } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
+import { Car, Gauge, Settings, Gift, User, Menu, X } from "lucide-react";
+import {
+  RadialBarChart,
+  RadialBar,
+  Cell,
+  ResponsiveContainer,
+} from "recharts";
 
 const mockBenefits = [
   { title: "10% Off Fuel", description: "Valid at selected stations", icon: <Gift />, cta: "Claim" },
@@ -14,23 +19,18 @@ const mockBenefits = [
 ];
 
 const rewardData = [
-  { name: 'Points', value: 750 },
-  { name: 'Remaining', value: 250 },
+  { name: "Points", value: 750 },
+  { name: "Remaining", value: 250 },
 ];
 
-const LIGHT_COLORS = ['#10B981', '#E5E7EB'];
-const DARK_COLORS = ['#10B981', '#374151'];
+const LIGHT_COLORS = ["#10B981", "#E5E7EB"];
+const DARK_COLORS = ["#10B981", "#374151"];
 
 export default function CredGarageDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [darkMode, setDarkMode] = useState(true);
   const [loading, setLoading] = useState(true);
-
-  const stats = [
-    { label: "Total Spent", value: "₹1,20,450" },
-    { label: "Mileage", value: "15.2 km/l" },
-    { label: "Services", value: "8 Times" },
-  ];
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const mode = localStorage.getItem("theme") === "light" ? false : true;
@@ -48,26 +48,87 @@ export default function CredGarageDashboard() {
 
   const currentColors = darkMode ? DARK_COLORS : LIGHT_COLORS;
 
+  const tabItems = [
+    { value: "overview", label: "Overview", icon: <Gauge /> },
+    { value: "profile", label: "Profile", icon: <User /> },
+    { value: "benefits", label: "Benefits", icon: <Gift /> },
+    { value: "settings", label: "Settings", icon: <Settings /> },
+  ];
+
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"} p-6 transition-colors`}>
-      <header className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <header className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">CRED Garage</h1>
-        <div className="flex gap-4 items-center">
+
+        {/* Desktop Actions */}
+        <div className="hidden sm:flex gap-4 items-center">
           <Switch checked={darkMode} onCheckedChange={toggleTheme} />
-          <Button variant="outline" className="border-white text-white dark:text-black dark:border-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white">
+          {/* <Button variant="default" className="border-white text-white dark:text-black dark:border-black hover:bg-green hover:text-black dark:hover:bg-black dark:hover:text-white">
             + Add Vehicle
+          </Button> */}
+        </div>
+
+        {/* Mobile Hamburger */}
+        <div className="sm:hidden">
+          <Button variant="ghost" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <X /> : <Menu />}
           </Button>
         </div>
       </header>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4 gap-2 bg-gray-800 dark:bg-gray-200 rounded-xl p-1 text-black">
-          <TabsTrigger value="overview"><Gauge className="inline mr-1" /> Overview</TabsTrigger>
-          <TabsTrigger value="profile"><User className="inline mr-1" /> Profile</TabsTrigger>
-          <TabsTrigger value="benefits"><Gift className="inline mr-1" /> Benefits</TabsTrigger>
-          <TabsTrigger value="settings"><Settings className="inline mr-1" /> Settings</TabsTrigger>
-        </TabsList>
+      {/* Mobile Menu Panel */}
+   {menuOpen && (
+  <div className="fixed inset-0 z-50 bg-gray-900 dark:bg-white text-white dark:text-black p-6 sm:hidden">
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-2xl font-bold">Menu</h2>
+      <Button variant="ghost" onClick={() => setMenuOpen(false)}>
+        <X className="w-6 h-6" />
+      </Button>
+    </div>
+    <div className="flex flex-col gap-4">
+      {tabItems.map((tab) => (
+        <Button
+          key={tab.value}
+          variant={activeTab === tab.value ? "default" : "ghost"}
+          onClick={() => {
+            setActiveTab(tab.value);
+            setMenuOpen(false);
+          }}
+          className="flex items-center gap-2 justify-start text-lg"
+        >
+          {tab.icon} {tab.label}
+        </Button>
+      ))}
+      <hr className="my-4 border-gray-600 dark:border-gray-300" />
+      <Button
+        variant="outline"
+        className="border-white dark:border-black text-white dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white"
+      >
+        + Add Vehicle
+      </Button>
+      <div className="flex items-center justify-between mt-4">
+        <span className="text-sm">Dark Mode</span>
+        <Switch checked={darkMode} onCheckedChange={toggleTheme} />
+      </div>
+    </div>
+  </div>
+)}
 
+      {/* Tabs Component */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        {/* Desktop Tabs */}
+        <div className="hidden sm:block">
+          <TabsList className="grid w-full grid-cols-4 gap-2 bg-gray-800 dark:bg-gray-200 rounded-xl p-1 text-black">
+            {tabItems.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                {tab.icon} <span className="ml-1">{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
+        {/* Tab Content */}
         <TabsContent value="overview">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 animate-pulse">
@@ -76,13 +137,12 @@ export default function CredGarageDashboard() {
               ))}
             </div>
           ) : (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6"
-            >
-              {stats.map((stat, index) => (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              {[
+                { label: "Total Spent", value: "₹1,20,450" },
+                { label: "Mileage", value: "15.2 km/l" },
+                { label: "Services", value: "8 Times" },
+              ].map((stat, index) => (
                 <Card key={index} className="bg-gray-800 border-none dark:bg-gray-200 dark:text-black">
                   <CardContent className="p-6 text-center">
                     <p className="text-lg font-semibold text-gray-400 dark:text-gray-600">{stat.label}</p>
@@ -111,18 +171,13 @@ export default function CredGarageDashboard() {
         </TabsContent>
 
         <TabsContent value="profile">
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ duration: 0.4 }}
-            className="mt-6 text-center"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="mt-6 text-center">
             <img src="https://i.pravatar.cc/100" className="mx-auto rounded-full w-24 h-24" alt="avatar" />
             <h2 className="mt-4 text-xl font-bold">Sajeer K</h2>
             <p className="text-gray-400">Level 5 • Garage Champ</p>
             <div className="w-full max-w-md mx-auto mt-4">
               <div className="w-full h-3 bg-gray-700 rounded-full">
-                <div className="h-3 bg-green-500 rounded-full" style={{ width: '75%' }}></div>
+                <div className="h-3 bg-green-500 rounded-full" style={{ width: "75%" }}></div>
               </div>
               <p className="text-sm mt-2 text-gray-400">750 XP / 1000 XP</p>
             </div>
@@ -130,12 +185,7 @@ export default function CredGarageDashboard() {
         </TabsContent>
 
         <TabsContent value="benefits">
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ duration: 0.4 }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             {mockBenefits.map((item, index) => (
               <Card key={index} className="bg-gray-800 dark:bg-gray-200 dark:text-black">
                 <CardContent className="p-6 flex flex-col gap-2">
@@ -149,12 +199,7 @@ export default function CredGarageDashboard() {
         </TabsContent>
 
         <TabsContent value="settings">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5 }}
-            className="mt-6 text-center"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mt-6 text-center">
             <p>Manage notification preferences and more.</p>
           </motion.div>
         </TabsContent>
