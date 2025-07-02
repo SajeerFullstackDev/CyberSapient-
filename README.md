@@ -9,7 +9,7 @@ A modern, responsive dashboard built with **Next.js**, **Tailwind CSS**, **Frame
 - ⚡ Built with **Next.js 15** (Pages Router)
 - 🌗 **Dark Mode** toggle using Tailwind and localStorage
 - 📊 Charts with **Recharts** (Radial Progress)
-- 🧪 Mock API loading with skeletons
+- 🧪 Mock API with next js backend inbuild api with zustand and loading with skeletons
 - 💅 Styled with **Tailwind CSS + ShadCN/UI**
 - 🧭 Responsive layout with mobile hamburger menu
 - 🎬 Animations using **Framer Motion**
