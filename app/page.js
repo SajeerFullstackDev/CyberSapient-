@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
+import useBenefitsStore from "@/store/useBenefitsStore";
 
 
 const mockBenefits = [
@@ -33,24 +34,24 @@ export default function CredGarageDashboard() {
   const [darkMode, setDarkMode] = useState(true);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [benefits, setBenefits] = useState([]);
-const [benefitsLoading, setBenefitsLoading] = useState(true);
-
+  // const [benefits, setBenefits] = useState([]);
+// const [benefitsLoading, setBenefitsLoading] = useState(true);
+const { benefits, loading: benefitsLoading, fetchBenefits } = useBenefitsStore();
 
 useEffect(() => {
-  const fetchBenefits = async () => {
-    try {
-      const response = await axios.get("/api/benefits"); // Change to your actual API
+  // const fetchBenefits = async () => {
+  //   try {
+  //     const response = await axios.get("/api/benefits"); // Change to your actual API
 
-      console.log(response,"saj");
+  //     console.log(response,"saj");
       
-      setBenefits(response.data);
-    } catch (error) {
-      console.error("Failed to fetch benefits:", error);
-    } finally {
-      setBenefitsLoading(false);
-    }
-  };
+  //     setBenefits(response.data);
+  //   } catch (error) {
+  //     console.error("Failed to fetch benefits:", error);
+  //   } finally {
+  //     setBenefitsLoading(false);
+  //   }
+  // };
 
   fetchBenefits();
 }, []);
@@ -209,7 +210,7 @@ useEffect(() => {
           </motion.div>
         </TabsContent>
 
-       <TabsContent value="benefits">
+     <TabsContent value="benefits">
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
@@ -223,8 +224,8 @@ useEffect(() => {
         ))}
       </>
     ) : (
-      benefits.map((item, index) => (
-        <Card key={index} className="bg-gray-800 dark:bg-gray-200 dark:text-black">
+      benefits.map((item) => (
+        <Card key={item.id} className="bg-gray-800 dark:bg-gray-200 dark:text-black">
           <CardContent className="p-6 flex flex-col gap-2">
             <div className="flex items-center gap-3 text-xl">
               <Gift /> <span>{item.title}</span>
@@ -237,6 +238,7 @@ useEffect(() => {
     )}
   </motion.div>
 </TabsContent>
+
 
 
         <TabsContent value="settings">
