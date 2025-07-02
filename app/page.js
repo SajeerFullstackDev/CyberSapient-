@@ -12,6 +12,8 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
+import axios from "axios";
+
 
 const mockBenefits = [
   { title: "10% Off Fuel", description: "Valid at selected stations", icon: <Gift />, cta: "Claim" },
@@ -31,6 +33,29 @@ export default function CredGarageDashboard() {
   const [darkMode, setDarkMode] = useState(true);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [benefits, setBenefits] = useState([]);
+const [benefitsLoading, setBenefitsLoading] = useState(true);
+
+
+useEffect(() => {
+  const fetchBenefits = async () => {
+    try {
+      const response = await axios.get("/api/benefits"); // Change to your actual API
+
+      console.log(response,"saj");
+      
+      setBenefits(response.data);
+    } catch (error) {
+      console.error("Failed to fetch benefits:", error);
+    } finally {
+      setBenefitsLoading(false);
+    }
+  };
+
+  fetchBenefits();
+}, []);
+
+
 
   useEffect(() => {
     const mode = localStorage.getItem("theme") === "light" ? false : true;
@@ -184,19 +209,35 @@ export default function CredGarageDashboard() {
           </motion.div>
         </TabsContent>
 
-        <TabsContent value="benefits">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-            {mockBenefits.map((item, index) => (
-              <Card key={index} className="bg-gray-800 dark:bg-gray-200 dark:text-black">
-                <CardContent className="p-6 flex flex-col gap-2">
-                  <div className="flex items-center gap-3 text-xl">{item.icon}<span>{item.title}</span></div>
-                  <p className="text-sm text-gray-400 dark:text-gray-600">{item.description}</p>
-                  <Button className="self-start mt-2">{item.cta}</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </motion.div>
-        </TabsContent>
+       <TabsContent value="benefits">
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.4 }}
+    className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6"
+  >
+    {benefitsLoading ? (
+      <>
+        {[1, 2].map((i) => (
+          <Card key={i} className="bg-gray-800 h-32 dark:bg-gray-200 dark:text-black animate-pulse" />
+        ))}
+      </>
+    ) : (
+      benefits.map((item, index) => (
+        <Card key={index} className="bg-gray-800 dark:bg-gray-200 dark:text-black">
+          <CardContent className="p-6 flex flex-col gap-2">
+            <div className="flex items-center gap-3 text-xl">
+              <Gift /> <span>{item.title}</span>
+            </div>
+            <p className="text-sm text-gray-400 dark:text-gray-600">{item.description}</p>
+            <Button className="self-start mt-2">{item.cta}</Button>
+          </CardContent>
+        </Card>
+      ))
+    )}
+  </motion.div>
+</TabsContent>
+
 
         <TabsContent value="settings">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mt-6 text-center">
